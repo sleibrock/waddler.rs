@@ -3,10 +3,18 @@
 
 use std::fmt;
 use std::ops::{Range, RangeFrom};
+
 use utils::u8_to_u32;
 use structs::constants::{HEADER_W, IWAD_NUMBER, PWAD_NUMBER};
 use structs::lump::Lump;
 use structs::level::Level;
+//use structs::seg::Seg;
+//use structs::sector::Sector;
+//use structs::subsector::Subsector;
+//use structs::sidedef::SideDef;
+//use structs::blockmap::BlockMap;
+//use structs::reject::Reject;
+//use structs::behavior::Behavior;
 
 
 
@@ -20,9 +28,9 @@ pub struct WadHeader {
 
 
 pub struct Wad {
-    pub name:   String,
-    pub header: WadHeader,
-    pub levels: Vec<Level>,
+    pub name:     String,
+    pub header:   WadHeader,
+    pub levels:   Vec<Level>,
     pub is_hexen: bool,
 }
 
@@ -79,7 +87,7 @@ impl Wad {
         let mut current_level    : &Lump = &lumps[0];
         let mut current_verts    : &Lump = &lumps[0];
         let mut current_lines    : &Lump = &lumps[0];
-        //let mut current_things   : &Lump = &lumps[0];
+        let mut current_things   : &Lump = &lumps[0];
         //let mut current_sectors  : &Lump = &lumps[0];
         //let mut current_ssectors : &Lump = &lumps[0];
         //let mut current_sidedefs : &Lump = &lumps[0];
@@ -89,8 +97,8 @@ impl Wad {
 
         // if there are BEHAVIOR lumps, then we need an additiona
         let data_count_target = match is_hexen {
-            true => 3,
-            _    => 3,
+            true => 4,
+            _    => 4,
         };
 
 
@@ -102,7 +110,7 @@ impl Wad {
                 match lump.name.as_str() {
                     "VERTEXES" => { current_verts = lump; data_count += 1; }
                     "LINEDEFS" => { current_lines = lump; data_count += 1; }
-                    "THINGS"   => {}
+                    "THINGS"   => { current_things = lump; data_count += 1;}
                     "SECTORS"  => {}
                     "SSECTORS" => {}
                     "SIDEDEFS" => {}
@@ -115,6 +123,7 @@ impl Wad {
                     &current_level.name,
                     &dat[current_verts.range()],
                     &dat[current_lines.range()],
+                    &dat[current_things.range()],
                     is_hexen,
                 ));
             }

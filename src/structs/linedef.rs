@@ -12,7 +12,7 @@ pub struct LineDef {
     pub start:     usize,
     pub right:     i16,
     pub flags:     u16,
-    pub stype:     u16,
+    pub spectype:  u16,
     pub args:      [u8; 6],
     pub is_hexen:  bool,
     pub one_sided: bool,
@@ -32,14 +32,14 @@ impl LineDef {
                 }
 
                 LineDef {
-                    stype: 0,
-                    tag:   0,
-                    end:   u8_to_u16(dat[2],  dat[3]) as usize,
-                    left:  left, 
-                    start: u8_to_u16(dat[0],  dat[1]) as usize,
-                    right: right, 
-                    flags: u8_to_u16(dat[4],  dat[5]),
-                    args:  [dat[6], dat[7], dat[8], dat[9], dat[10], dat[11]],
+                    spectype: dat[6] as u16,
+                    tag:      0,
+                    end:      u8_to_u16(dat[2],  dat[3]) as usize,
+                    left:     left, 
+                    start:    u8_to_u16(dat[0],  dat[1]) as usize,
+                    right:    right, 
+                    flags:    u8_to_u16(dat[4],  dat[5]),
+                    args:     [dat[6], dat[7], dat[8], dat[9], dat[10], dat[11]],
                     is_hexen: true,
                     one_sided: is_one_sided,
                 }
@@ -51,15 +51,15 @@ impl LineDef {
                 }
 
                 LineDef {
-                    tag:   u8_to_u16(dat[8],   dat[9]),
-                    end:   u8_to_u16(dat[2],   dat[3]) as usize,
-                    left:  left,
-                    start: u8_to_u16(dat[0],   dat[1]) as usize,
-                    right: right,
-                    flags: u8_to_u16(dat[4],   dat[5]),
-                    stype: u8_to_u16(dat[6],   dat[7]),
-                    args:  [0, 0, 0, 0, 0, 0],
-                    is_hexen: false,
+                    tag:       u8_to_u16(dat[8],   dat[9]),
+                    end:       u8_to_u16(dat[2],   dat[3]) as usize,
+                    left:      left,
+                    start:     u8_to_u16(dat[0],   dat[1]) as usize,
+                    right:     right,
+                    flags:     u8_to_u16(dat[4],   dat[5]),
+                    spectype:  u8_to_u16(dat[6],   dat[7]),
+                    args:      [0, 0, 0, 0, 0, 0],
+                    is_hexen:  false,
                     one_sided: is_one_sided,
                 }
             }
