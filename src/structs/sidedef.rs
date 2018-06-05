@@ -1,14 +1,14 @@
 // structs/sidedef.rs
 
-//use utils::{u8_to_u16, u8_to_i16, u8_to_string};
+use utils::{u8_to_u16, u8_to_i16, u8_to_string};
 use structs::constants::SIDEDEF_W;
 
 pub struct SideDef {
-    pub x_offset: i16,
-    pub y_offset: i16,
-    pub sector: u16,
-    pub upper_tex: String,
-    pub lower_tex: String,
+    pub x_offset:   i16,
+    pub y_offset:   i16,
+    pub sector:     u16,
+    pub upper_tex:  String,
+    pub lower_tex:  String,
     pub middle_tex: String,
 }
 
@@ -27,15 +27,14 @@ impl SideDef {
         while dat[zero3] == 0 { zero3 -= 1; }
 
         SideDef {
-            x_offset: 0,
-            y_offset: 0,
-            sector: 0,
-            upper_tex: String::from("Hello"),
-            lower_tex: String::from("world"),
-            middle_tex: String::from("lol"),
+            x_offset:   u8_to_i16(dat[0], dat[1]),
+            y_offset:   u8_to_i16(dat[2], dat[3]),
+            sector:     u8_to_u16(dat[28], dat[29]),
+            upper_tex:  u8_to_string(&dat[4..(zero1+1)]),
+            lower_tex:  u8_to_string(&dat[12..(zero2+1)]),
+            middle_tex: u8_to_string(&dat[20..(zero3+1)]),
         }
     }
-
 }
 
 

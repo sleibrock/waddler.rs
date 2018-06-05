@@ -76,11 +76,16 @@ impl Wad {
             return Err(format!("No lumps given to Wad::new()"));
         }
 
+        let mut current_level    : &Lump = &lumps[0];
+        let mut current_verts    : &Lump = &lumps[0];
+        let mut current_lines    : &Lump = &lumps[0];
+        //let mut current_things   : &Lump = &lumps[0];
+        //let mut current_sectors  : &Lump = &lumps[0];
+        //let mut current_ssectors : &Lump = &lumps[0];
+        //let mut current_sidedefs : &Lump = &lumps[0];
+
+        let mut data_count : usize  = 0;
         let mut levels : Vec<Level> = Vec::new();
-        let mut data_count : usize = 0;
-        let mut current_level : &Lump = &lumps[0];
-        let mut current_verts : &Lump = &lumps[0];
-        let mut current_lines : &Lump = &lumps[0];
 
         // if there are BEHAVIOR lumps, then we need an additiona
         let data_count_target = match is_hexen {
@@ -97,8 +102,8 @@ impl Wad {
                 match lump.name.as_str() {
                     "VERTEXES" => { current_verts = lump; data_count += 1; }
                     "LINEDEFS" => { current_lines = lump; data_count += 1; }
-                    "THINGS" => {}
-                    "SECTORS" => {}
+                    "THINGS"   => {}
+                    "SECTORS"  => {}
                     "SSECTORS" => {}
                     "SIDEDEFS" => {}
                     _ => {}

@@ -32,14 +32,10 @@ impl Lump {
             }
         }
 
-        // find the position and sizes of the lump
-        let p = u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize;
-        let s = u8_to_u32(dat[4], dat[5], dat[6], dat[7]) as usize;
-
         Lump {
             is_level: is_level_lump,
-            posn:     p,
-            size:     s,
+            posn:     u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize,
+            size:     u8_to_u32(dat[4], dat[5], dat[6], dat[7]) as usize,
             name:     u8_to_string(&dat[8..(first_zero+1)]),
         }
     }

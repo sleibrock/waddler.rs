@@ -2,12 +2,17 @@
 
 
 use std::ops::Range;
+use std::fs::create_dir;
 
+
+/// Data slicing function to yield a Range<usize> type
+/// which will be used to slice arrays of u8's
 pub fn packet(start: usize, width: usize) -> Range<usize> {
     (start..(start + width))
 }
 
 
+/// Little Endian conversion functions
 pub fn u8_to_u16(a: u8, b: u8) -> u16 {
     (a as u16)+((b as u16)<<8)
 }
@@ -30,6 +35,31 @@ pub fn u8_to_string(datslice: &[u8]) -> String {
 
 
 
+/// File and directory utilities
+fn dir_name(dname: &str, extn: &str) -> String {
+    format!("{}.{}", dname, extn)
+}
+
+
+fn make_dir(dname: &str) -> bool {
+    match create_dir(format!("{}", dname)) {
+        Ok(_) => true,
+        _     => false,
+    }
+}
+
+
+/// Flip a u64 value across an axis
+/// If the axis is set to zero, return the value
+fn flip_u64(v: u64, m: u64) -> u64 {
+    match m == 0 {
+        true => v,
+        _    => m - v,
+    }
+}
+
+
+/// tests
 #[cfg(test)]
 mod tests {
     use utils::*;
