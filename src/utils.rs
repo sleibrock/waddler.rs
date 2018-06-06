@@ -11,6 +11,10 @@ pub fn packet(start: usize, width: usize) -> Range<usize> {
     (start..(start + width))
 }
 
+pub fn u8_slice(start: usize, width: usize, dat: &[u8]) -> &[u8] {
+    &dat[(start..(start + width))]
+}
+
 
 /// Little Endian conversion functions
 pub fn u8_to_u16(a: u8, b: u8) -> u16 {
@@ -36,12 +40,12 @@ pub fn u8_to_string(datslice: &[u8]) -> String {
 
 
 /// File and directory utilities
-fn dir_name(dname: &str, extn: &str) -> String {
+pub fn dir_name(dname: &str, extn: &str) -> String {
     format!("{}.{}", dname, extn)
 }
 
 
-fn make_dir(dname: &str) -> bool {
+pub fn make_dir(dname: &str) -> bool {
     match create_dir(format!("{}", dname)) {
         Ok(_) => true,
         _     => false,
@@ -51,7 +55,7 @@ fn make_dir(dname: &str) -> bool {
 
 /// Flip a u64 value across an axis
 /// If the axis is set to zero, return the value
-fn flip_u64(v: u64, m: u64) -> u64 {
+pub fn flip_u64(v: u64, m: u64) -> u64 {
     match m == 0 {
         true => v,
         _    => m - v,

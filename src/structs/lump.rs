@@ -6,9 +6,11 @@ use utils::{u8_to_u32, u8_to_string};
 use structs::constants::{HEADER_W, LUMP_W};
 
 pub struct Lump {
+    pub name:     String,
     pub posn:     usize,
     pub size:     usize,
-    pub name:     String,
+    pub start:    usize,
+    pub end:      usize,
     pub is_level: bool,
 }
 
@@ -32,16 +34,16 @@ impl Lump {
             }
         }
 
+        let p = u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize;
+        let s = u8_to_u32(dat[4], dat[5], dat[6], dat[7]) as usize;
         Lump {
             is_level: is_level_lump,
-            posn:     u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize,
-            size:     u8_to_u32(dat[4], dat[5], dat[6], dat[7]) as usize,
+            posn:     p,
+            size:     s,
+            start:    p - HEADER_W,
+            end:      (p - HEADER_W) + s,
             name:     u8_to_string(&dat[8..(first_zero+1)]),
         }
-    }
-
-    pub fn range(&self) -> Range<usize> {
-        ((self.posn-HEADER_W) .. ((self.posn-HEADER_W)+self.size))
     }
 }
 

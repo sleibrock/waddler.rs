@@ -1,15 +1,25 @@
 // structs/level.rs
 
+/// The Level struct contains vectors for all Level data
+/// ie: the VERTEXES lump for a level gets converted to Vec<Vertex>
+/// ie2: the LINEDEFS lump gets converted to Vec<LineDef>
+/// Parsing of structs is done in Level::new()
+/// Adding more data to the level requires adding more params to the
+/// Level::new() function
+
 use std::fmt;
-use utils::packet;
+use utils::{packet,u8_slice};
 use structs::linedef::LineDef;
 use structs::vertex::Vertex;
 use structs::thing::Thing;
-use structs::constants::{DOOM_LINEDEF_W, HEXEN_LINEDEF_W, VERTEX_W};
+use structs::constants::{VERTEX_W};
+use structs::constants::{DOOM_LINEDEF_W, HEXEN_LINEDEF_W};
 use structs::constants::{DOOM_THING_W, HEXEN_THING_W};
 
 
-
+/// Level struct, which contains a name (String)
+/// and several vectors for Level Data lumps
+/// Shared lumps will be stored at the WAD level (structs/wad.rs)
 pub struct Level {
     pub name:     String,
     pub vertices: Vec<Vertex>,
@@ -46,20 +56,22 @@ impl Level {
         // start parsing raw data and initializing structs
         let mut off : usize = 0;
         while off < vert_raw.len() {
-            vertices.push(Vertex::new(&vert_raw[packet(off, VERTEX_W)]));
+            vertices.push(Vertex::new(u8_slice(off, VERTEX_W, &vert_raw)));
+//          vertices.push(Vertex::new(&vert_raw[packet(off, VERTEX_W)]));
             off += VERTEX_W;
         }
 
         off = 0;
         while off < ld_raw.len() {
-            linedefs.push(LineDef::new(is_hexen, &ld_raw[packet(off, ld_w)]));
+            linedefs.push(LineDef::new(is_hexen, u8_slice(off, ld_w, &ld_raw)));
+//            linedefs.push(LineDef::new(is_hexen, &ld_raw[packet(off, ld_w)]));
             off += ld_w;
         }
 
-
         off = 0;
         while off < thing_raw.len() {
-            things.push(Thing::new(is_hexen, &thing_raw[packet(off, thing_w)]));
+            things.push(Thing::new(is_hexen, u8_slice(off, thing_w, &thing_raw)));
+//            things.push(Thing::new(is_hexen, &thing_raw[packet(off, thing_w)]));
             off += thing_w;
         } 
 

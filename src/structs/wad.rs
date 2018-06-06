@@ -4,7 +4,7 @@
 use std::fmt;
 use std::ops::{Range, RangeFrom};
 
-use utils::u8_to_u32;
+use utils::{u8_to_u32,u8_slice};
 use structs::constants::{HEADER_W, IWAD_NUMBER, PWAD_NUMBER};
 use structs::lump::Lump;
 use structs::level::Level;
@@ -84,13 +84,13 @@ impl Wad {
             return Err(format!("No lumps given to Wad::new()"));
         }
 
-        let mut current_level    : &Lump = &lumps[0];
-        let mut current_verts    : &Lump = &lumps[0];
-        let mut current_lines    : &Lump = &lumps[0];
-        let mut current_things   : &Lump = &lumps[0];
-        //let mut current_sectors  : &Lump = &lumps[0];
-        //let mut current_ssectors : &Lump = &lumps[0];
-        //let mut current_sidedefs : &Lump = &lumps[0];
+        let mut clevel    : &Lump = &lumps[0];
+        let mut cverts    : &Lump = &lumps[0];
+        let mut clines    : &Lump = &lumps[0];
+        let mut cthings   : &Lump = &lumps[0];
+        //let mut csectors  : &Lump = &lumps[0];
+        //let mut csubsectors : &Lump = &lumps[0];
+        //let mut csidedefs : &Lump = &lumps[0];
 
         let mut data_count : usize  = 0;
         let mut levels : Vec<Level> = Vec::new();
@@ -104,13 +104,13 @@ impl Wad {
 
         for lump in lumps {
             if lump.is_level {
-                current_level = lump;
+                clevel = lump;
                 data_count += 1;
             } else {
                 match lump.name.as_str() {
-                    "VERTEXES" => { current_verts = lump; data_count += 1; }
-                    "LINEDEFS" => { current_lines = lump; data_count += 1; }
-                    "THINGS"   => { current_things = lump; data_count += 1;}
+                    "VERTEXES" => { cverts = lump; data_count += 1; }
+                    "LINEDEFS" => { clines = lump; data_count += 1; }
+                    "THINGS"   => { cthings = lump; data_count += 1;}
                     "SECTORS"  => {}
                     "SSECTORS" => {}
                     "SIDEDEFS" => {}
@@ -120,10 +120,10 @@ impl Wad {
 
             if data_count == data_count_target {
                 levels.push(Level::new(
-                    &current_level.name,
-                    &dat[current_verts.range()],
-                    &dat[current_lines.range()],
-                    &dat[current_things.range()],
+                    &clevel.name,
+                    u8_slice(cverts.start, cverts.size, dat),
+                    u8_slice(clines.start, clines.size, dat),
+                    u8_slice(cthings.start, cthings.size, dat),
                     is_hexen,
                 ));
             }
