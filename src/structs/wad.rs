@@ -51,8 +51,8 @@ impl WadHeader {
         }
     }
 
-    pub fn lump_range(&self) -> Range<usize> { ((HEADER_W .. self.lumpaddr)) }
-    pub fn data_range(&self) -> RangeFrom<usize> { (self.lumpaddr ..) }
+    pub fn data_range(&self) -> Range<usize> { ((HEADER_W .. self.lumpaddr)) }
+    pub fn lump_range(&self) -> RangeFrom<usize> { (self.lumpaddr ..) }
 }
 
 
@@ -74,11 +74,12 @@ impl fmt::Debug for WadHeader {
 
 
 impl Wad {
-    pub fn new(n: &str,
-               hd: WadHeader,
-               lumps: &Vec<Lump>,
-               dat: &[u8],
-               is_hexen: bool
+    pub fn new(
+        n:        &str,
+        hd:       WadHeader,
+        lumps:    &Vec<Lump>,
+        dat:      &[u8],
+        is_hexen: bool
     ) -> Result<Wad, String> {
         if lumps.len() == 0 {
             return Err(format!("No lumps given to Wad::new()"));
@@ -118,6 +119,7 @@ impl Wad {
                 }
             }
 
+
             if data_count == data_count_target {
                 levels.push(Level::new(
                     &clevel.name,
@@ -126,6 +128,7 @@ impl Wad {
                     u8_slice(cthings.start, cthings.size, dat),
                     is_hexen,
                 ));
+                data_count = 0;
             }
         }
 

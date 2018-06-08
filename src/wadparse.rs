@@ -7,15 +7,13 @@
 use std::fs::File;
 use std::io::Read;
 
-use utils::packet;
-// use optparse
+use utils::u8_slice;
 use structs::wad::{Wad, WadHeader};
 use structs::lump::Lump;
 use structs::constants::{HEADER_W, LUMP_W};
 
 
-pub fn parse(fname: &str
-) -> Result<Wad, String> {
+pub fn parse(fname: &str) -> Result<Wad, String> {
 
     // begin opening the file
     let mut f = match File::open(fname) {
@@ -28,11 +26,13 @@ pub fn parse(fname: &str
         _     => panic!("Failed to read all bytes from the file"),
     };
 
+
     // initialize the header with the first 12 bytes
     let header = WadHeader::new(&all_bytes[0..HEADER_W]);
     if !header.is_wad {
         return Err(String::from(format!("{} is not a valid wad", &fname)));
     }
+    println!("{:?}", header);
 
     // slice the data and lump bytes into different pools
     let core_data = &all_bytes[header.data_range()];
@@ -45,7 +45,8 @@ pub fn parse(fname: &str
 
     // lump reading loop which increments the offset by 16
     while offset < lump_data.len() {
-        let pkt = &lump_data[packet(offset, LUMP_W)];
+        let pkt = u8_slice(offset, LUMP_W, &lump_data);
+//        let pkt = &lump_data[packet(offset, LUMP_W)];
 
         // generate a lump from the slice
         let l = Lump::new(&pkt);

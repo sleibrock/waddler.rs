@@ -29,7 +29,7 @@ More help can be found at <https://gitlab.com/sleibrock/waddler>
 
 
 
-pub struct MappingOptions {
+pub struct SvgmapOptions {
     pub help:         bool,
     pub size:         u64,
     pub files:        Vec<String>,
@@ -43,8 +43,8 @@ pub struct MappingOptions {
 
 
 
-impl MappingOptions {
-    pub fn new(arg_iter: &mut Args) -> Result<MappingOptions, String> {
+impl SvgmapOptions {
+    pub fn new(arg_iter: &mut Args) -> Result<SvgmapOptions, String> {
 
         let mut help = false;
         let mut verbose = false;
@@ -55,9 +55,6 @@ impl MappingOptions {
         let mut color_doors = false;
         let mut inverted = false;
         let mut files_buf : Vec<String> = Vec::new();
-
-
-
 
         let length : usize = arg_iter.len();
         if length == 0 {
@@ -128,7 +125,7 @@ impl MappingOptions {
             index += 1;
         }
 
-        Ok(MappingOptions {
+        Ok(SvgmapOptions {
             help:        help,
             size:        size,
             files:       files_buf,
@@ -140,6 +137,20 @@ impl MappingOptions {
             color_doors: color_doors,
         })
     } 
+
+
+    pub fn print(&self) {
+        if self.verbose {
+            println!("Help: {}", self.help);
+            println!("Size: {}", self.size);
+            println!("Version: {}", self.version);
+            println!("Verbosity: {}", self.verbose);
+            println!("Lighting: {}", self.lighting);
+            println!("Inverted: {}", self.inverted);
+            println!("Transparent: {}", self.transparent);
+            println!("Color Doors: {}", self.color_doors);
+        }
+    }
 }
 
 // end mapping/options.rs

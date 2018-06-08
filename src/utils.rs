@@ -53,6 +53,11 @@ pub fn make_dir(dname: &str) -> bool {
 }
 
 
+pub fn path_str(dir: &str, lname: &str, extn: &str) -> String {
+    format!("{}/{}.{}", dir, lname, extn)
+}
+
+
 /// Flip a u64 value across an axis
 /// If the axis is set to zero, return the value
 pub fn flip_u64(v: u64, m: u64) -> u64 {

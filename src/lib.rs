@@ -5,6 +5,7 @@ pub mod utils;
 pub mod wadparse;
 
 pub mod structs;
-pub mod mapping;
+pub mod svgmap;
+pub mod etc;
 
 // end lib.rs

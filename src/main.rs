@@ -6,7 +6,8 @@ extern crate waddler;
 use std::process::exit;
 use std::env::args;
 
-use waddler::mapping::mapper::map_program;
+use waddler::svgmap::programs::svgmap_entrypoint;
+use waddler::etc::programs::{info_entrypoint, debuglumps_entrypoint};
 
 
 fn main() {
@@ -32,9 +33,9 @@ fn main() {
     // list subcommands here
     // a subcommand function should return Result<u8, String>
     let result = match subcom.as_str() {
-        "info"       => Err(String::from("Incomplete")),
-        "debuglumps" => Err(String::from("Incomplete")), 
-        "exportmaps" => map_program(&arg_iter), 
+        "info"       => info_entrypoint(&mut arg_iter), 
+        "debuglumps" => debuglumps_entrypoint(&mut arg_iter),
+        "svgmap"     => svgmap_entrypoint(&mut arg_iter), 
         _            => Err(String::from("no matching program found")),
     };
 

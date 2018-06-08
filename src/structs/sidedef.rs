@@ -30,9 +30,9 @@ impl SideDef {
             x_offset:   u8_to_i16(dat[0], dat[1]),
             y_offset:   u8_to_i16(dat[2], dat[3]),
             sector:     u8_to_u16(dat[28], dat[29]),
-            upper_tex:  u8_to_string(&dat[4..(zero1+1)]),
-            lower_tex:  u8_to_string(&dat[12..(zero2+1)]),
-            middle_tex: u8_to_string(&dat[20..(zero3+1)]),
+            upper_tex:  u8_to_string(&dat[4..zero1+1]),
+            lower_tex:  u8_to_string(&dat[12..zero2+1]),
+            middle_tex: u8_to_string(&dat[20..zero3+1]),
         }
     }
 }

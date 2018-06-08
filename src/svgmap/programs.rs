@@ -1,6 +1,6 @@
-// mapping/mapper.rs
+// svgmap/programs.rs
 
-use std::fs::create_dir;
+
 use std::env::Args;
 
 use svg::*;
@@ -9,13 +9,17 @@ use structs::level::Level;
 use structs::wad::Wad;
 
 use utils::flip_u64;
+use utils::{dir_name, path_str, make_dir};
+
+use wadparse::parse;
+use svgmap::options::SvgmapOptions;
 
 
-
-fn line_color(line: &LineDef, color_doors: bool, inverted: bool) -> Color {
-    match color_doors {
+/// Pick a line color for a given &LineDef struct
+fn line_color(line: &LineDef, cdoors: bool, invert: bool) -> Color {
+    match cdoors {
         false => match line.one_sided {
-            true => match inverted {
+            true => match invert {
                 true => Color::White,
                 _    => Color::Black,
             },
@@ -29,7 +33,7 @@ fn line_color(line: &LineDef, color_doors: bool, inverted: bool) -> Color {
             27 => Color::Yellow, // yellow keycard stay open
             34 => Color::Yellow, // yellow keycard stay open
             _ => match line.one_sided {
-                true => match inverted {
+                true => match invert {
                     true => Color::White,
                     _    => Color::Black,
                 },
@@ -40,7 +44,8 @@ fn line_color(line: &LineDef, color_doors: bool, inverted: bool) -> Color {
 }
 
 
-fn level_to_svg(lev: &Level) -> SVG {
+/// Convert a &Level object into an SVG document struct
+fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG {
     // iter through vertices to find min/max bounds
     let mut min_x : i16 = 0; let mut min_y : i16 = 0;
     let mut max_x : i16 = 0; let mut max_y : i16 = 0;
@@ -76,7 +81,7 @@ fn level_to_svg(lev: &Level) -> SVG {
     let vy = my + (2 * padding as i32);
 
 
-    let base_canvas_size : f64 = 1024.0;
+    let base_canvas_size : f64 = opts.size as f64;
     let cx : u64;
     let cy : u64;
     if vx > vy {
@@ -91,6 +96,20 @@ fn level_to_svg(lev: &Level) -> SVG {
 
     let mut buf = SVG::new(cx, cy, vx as u64, vy as u64);
 
+    // check if we want a transparent background
+    // else put in a filled background rect first
+    if !opts.transparent {
+        buf.add_object(Box::new(SVGRect::new(
+            0,
+            0,
+            vx as u64,
+            vy as u64,
+            match opts.inverted {
+                true => Color::Black,
+                _    => Color::White,
+            }
+        )));
+    }
 
 
     for linedef in &lev.linedefs {
@@ -117,28 +136,78 @@ fn level_to_svg(lev: &Level) -> SVG {
         )));
     }
 
-    buf
+    return buf;
 }
 
 
-/*
-pub fn make_maps_from_wad(fname: &str,
-                          wad: &Wad,
-                          opts: &Options
+/// The main function to use to generate all SVG maps from a WAD
+/// Requires a name (of the wad), a WAD struct, and options
+pub fn make_maps_from_wad(
+    fname:  &str,
+    wad:    &Wad,
+    opts:   &SvgmapOptions
 ) -> Result<u8, String> {
-    let wad_dir_name = "";
-    let dir_made = false;
+    let wad_dir_name = dir_name(fname, "data");
+    let dir_made = make_dir(&wad_dir_name);
+    
+    if dir_made && opts.verbose {
+        println!("exportmaps: wad directory made");
+    }
+    
+    
+    for lev in &wad.levels {
+        println!("Current level: {}", &lev.name);
+        let mut svg_thing = level_to_svg(&lev, &opts);
+        let output_path = path_str(&wad_dir_name, &lev.name, "svg");
+        
+        match svg_thing.to_file(&output_path) {
+            Err(e) => {
+                return Err(format!("exportmaps: {}", e));
+            },
+            _ => {},
+        }
 
-
-
-    return Err(String::from("bleh"));
+        if opts.verbose {
+            println!("svgmap: rendered map to {}", output_path);
+        }
+    }
+    
+    if opts.verbose {
+        println!("svgmap: finished rendering maps for {}", fname);
+    }
+    
+    return Ok(0);
 }
-*/
 
 
+pub fn svgmap_entrypoint(args: &mut Args) -> Result<u8, String> {
 
-pub fn map_program(args: &Args) -> Result<u8, String> {
-   Ok(0)
+    // create the options
+    let opts = match SvgmapOptions::new(args) {
+        Ok(o) => o,
+        Err(e) => { return Err(format!("svgmap: {}", e)); },
+    };
+
+    opts.print();
+
+    for fname in &opts.files {
+        println!("File: {}", fname);
+        let wad = match parse(fname) {
+            Ok(w)  => w,
+            Err(e) => { return Err(format!("svgmap: {}", e)); }, 
+        };
+
+        match make_maps_from_wad(fname, &wad, &opts) {
+            Err(e) => { return Err(format!("svgmap: {}", e)); },
+            Ok(_) => {
+                if opts.verbose {
+                    println!("Rendered wad {} successfully", fname);
+                }
+            },
+        }
+    }
+    
+    return Ok(0);
 }
 
-// end mapping/mapper.rs
+// end svgmap/programs.rs

@@ -8,7 +8,7 @@
 /// Level::new() function
 
 use std::fmt;
-use utils::{packet,u8_slice};
+use utils::{u8_slice,packet};
 use structs::linedef::LineDef;
 use structs::vertex::Vertex;
 use structs::thing::Thing;
@@ -29,13 +29,13 @@ pub struct Level {
 
 
 impl Level {
-    pub fn new(name:      &String,
-               vert_raw:  &[u8],
-               ld_raw:    &[u8],
-               thing_raw: &[u8],
-               is_hexen: bool
+    pub fn new(
+        name:      &String,
+        vert_raw:  &[u8],
+        ld_raw:    &[u8],
+        thing_raw: &[u8],
+        is_hexen: bool
     ) -> Level {
-
         // start initializing vectors for the lumps
         let mut vertices : Vec<Vertex>  = Vec::new();
         let mut linedefs : Vec<LineDef> = Vec::new();
@@ -43,12 +43,12 @@ impl Level {
 
 
         // determine the widths of each struct needed
-        let ld_w : usize = match is_hexen {
+        let ld_w = match is_hexen {
             true => HEXEN_LINEDEF_W,
             _    => DOOM_LINEDEF_W,
         };
 
-        let thing_w : usize = match is_hexen {
+        let thing_w = match is_hexen {
             true => HEXEN_THING_W,
             _    => DOOM_THING_W,
         };
@@ -57,21 +57,18 @@ impl Level {
         let mut off : usize = 0;
         while off < vert_raw.len() {
             vertices.push(Vertex::new(u8_slice(off, VERTEX_W, &vert_raw)));
-//          vertices.push(Vertex::new(&vert_raw[packet(off, VERTEX_W)]));
             off += VERTEX_W;
         }
 
         off = 0;
         while off < ld_raw.len() {
             linedefs.push(LineDef::new(is_hexen, u8_slice(off, ld_w, &ld_raw)));
-//            linedefs.push(LineDef::new(is_hexen, &ld_raw[packet(off, ld_w)]));
             off += ld_w;
         }
 
         off = 0;
-        while off < thing_raw.len() {
+        while off < thing_raw.len() { 
             things.push(Thing::new(is_hexen, u8_slice(off, thing_w, &thing_raw)));
-//            things.push(Thing::new(is_hexen, &thing_raw[packet(off, thing_w)]));
             off += thing_w;
         } 
 
