@@ -8,7 +8,7 @@
 /// Level::new() function
 
 use std::fmt;
-use utils::{u8_slice,packet};
+use utils::u8_slice;
 use structs::linedef::LineDef;
 use structs::vertex::Vertex;
 use structs::thing::Thing;

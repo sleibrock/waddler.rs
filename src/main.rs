@@ -36,16 +36,17 @@ fn main() {
         "info"       => info_entrypoint(&mut arg_iter), 
         "debuglumps" => debuglumps_entrypoint(&mut arg_iter),
         "svgmap"     => svgmap_entrypoint(&mut arg_iter), 
+        "texdebug"   => Err(String::from("not implemented")),
         _            => Err(String::from("no matching program found")),
     };
 
     // unpack the Result<u8, String> type and process errors
     match result {
-        Ok(_) => {},
         Err(e) => {
             println!("waddler: {}", e);
             exit(-100);
         },
+        _ => {},
     }
 
     exit(0);

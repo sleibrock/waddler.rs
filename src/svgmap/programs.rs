@@ -16,7 +16,8 @@ use svgmap::options::SvgmapOptions;
 
 
 /// Pick a line color for a given &LineDef struct
-fn line_color(line: &LineDef, cdoors: bool, invert: bool) -> Color {
+fn line_color(line: &LineDef, cdoors: bool, invert: bool) -> Color
+{
     match cdoors {
         false => match line.one_sided {
             true => match invert {
@@ -45,12 +46,13 @@ fn line_color(line: &LineDef, cdoors: bool, invert: bool) -> Color {
 
 
 /// Convert a &Level object into an SVG document struct
-fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG {
+fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG
+{
     // iter through vertices to find min/max bounds
     let mut min_x : i16 = 0; let mut min_y : i16 = 0;
     let mut max_x : i16 = 0; let mut max_y : i16 = 0;
-
-    for vert in &lev.vertices {
+    for vert in &lev.vertices
+    {
         if min_x == 0 && max_x == 0 && min_y == 0 && max_y == 0 {
             min_x = vert.x; max_x = vert.x;
             min_y = vert.y; max_y = vert.y;
@@ -79,7 +81,6 @@ fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG {
 
     let vx = mx + (2 * padding as i32);
     let vy = my + (2 * padding as i32);
-
 
     let base_canvas_size : f64 = opts.size as f64;
     let cx : u64;
@@ -111,8 +112,8 @@ fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG {
         )));
     }
 
-
-    for linedef in &lev.linedefs {
+    for linedef in &lev.linedefs
+    {
         let a = &lev.vertices[linedef.start];
         let b = &lev.vertices[linedef.end];
 
@@ -143,10 +144,11 @@ fn level_to_svg(lev: &Level, opts: &SvgmapOptions) -> SVG {
 /// The main function to use to generate all SVG maps from a WAD
 /// Requires a name (of the wad), a WAD struct, and options
 pub fn make_maps_from_wad(
-    fname:  &str,
-    wad:    &Wad,
-    opts:   &SvgmapOptions
-) -> Result<u8, String> {
+    fname: &str,
+    wad:   &Wad,
+    opts:  &SvgmapOptions
+) -> Result<u8, String>
+{
     let wad_dir_name = dir_name(fname, "data");
     let dir_made = make_dir(&wad_dir_name);
     
@@ -180,8 +182,8 @@ pub fn make_maps_from_wad(
 }
 
 
-pub fn svgmap_entrypoint(args: &mut Args) -> Result<u8, String> {
-
+pub fn svgmap_entrypoint(args: &mut Args) -> Result<u8, String>
+{
     // create the options
     let opts = match SvgmapOptions::new(args) {
         Ok(o) => o,

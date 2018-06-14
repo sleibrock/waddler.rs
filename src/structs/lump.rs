@@ -58,7 +58,7 @@ impl Lump {
 // debug printer for a Lump
 impl fmt::Debug for Lump {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}<0x{:X}-0x{:X}>", self.name, self.posn, self.posn+self.size)
+        write!(f, "{} <0x{:X} .. 0x{:X}>", self.name, self.posn, self.posn+self.size)
     }
 }
 

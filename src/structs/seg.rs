@@ -1,5 +1,7 @@
 // structs/seg.rs
 
+use structs::constants::SEG_W;
+
 pub struct Seg {
     pub start:     u16,
     pub end:       u16,
@@ -12,14 +14,18 @@ pub struct Seg {
 
 impl Seg {
     pub fn new(dat: &[u8]) -> Seg {
-        Seg {
+        if dat.len() != SEG_W {
+            panic!("Seg error");
+        } 
+
+        return Seg {
             start: 0,
             end: 0,
             angle: 0,
             line_id: 0,
             direction: 0,
             offset: 0,
-        }
+        };
     }
 }
 

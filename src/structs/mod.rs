@@ -9,6 +9,7 @@ pub mod sidedef;
 pub mod wad;
 pub mod level;
 pub mod thing;
+pub mod texture;
 
 
 

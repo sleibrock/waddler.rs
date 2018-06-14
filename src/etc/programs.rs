@@ -7,12 +7,13 @@ use wadparse::parse;
 use etc::options::{InfoOptions, DebugLumpsOptions};
 
 
-pub fn info_entrypoint(args: &mut Args) -> Result<u8, String> {
+pub fn info_entrypoint(args: &mut Args) -> Result<u8, String>
+{
     Err(format!("Not implemented"))
 }
 
-pub fn debuglumps_entrypoint(args: &mut Args) -> Result<u8, String> {
-
+pub fn debuglumps_entrypoint(args: &mut Args) -> Result<u8, String>
+{
     let opts = match DebugLumpsOptions::new(args) {
         Ok(o) => o,
         Err(e) => { return Err(format!("debuglumps: {}", e)); },
@@ -21,14 +22,15 @@ pub fn debuglumps_entrypoint(args: &mut Args) -> Result<u8, String> {
     for fname in &opts.files {
         let wad = match parse(fname) {
             Ok(w) => w,
-            Err(e) => { return Err(format!("???")); },
+            Err(_) => { return Err(format!("???")); },
         };
 
-        println!("got a wad");
+        for lump in &wad.lumps {
+            println!("{:?}", lump);
+        }
     }
-    
-    
-    return Err(format!("debuglumps: not implemented"));
+
+    return Ok(0);
 }
 
 // end etc/programs.rs
