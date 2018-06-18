@@ -34,7 +34,7 @@ fn main() {
     // a subcommand function should return Result<u8, String>
     let result = match subcom.as_str() {
         "info"       => info_entrypoint(&mut arg_iter), 
-        "debuglumps" => debuglumps_entrypoint(&mut arg_iter),
+        "lumps"      => debuglumps_entrypoint(&mut arg_iter),
         "svgmap"     => svgmap_entrypoint(&mut arg_iter), 
         "texdebug"   => Err(String::from("not implemented")),
         _            => Err(String::from("no matching program found")),

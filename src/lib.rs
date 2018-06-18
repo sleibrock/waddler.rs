@@ -1,6 +1,7 @@
 // lib.rs
 
 pub mod svg;
+pub mod netpbm;
 pub mod utils;
 pub mod wadparse;
 

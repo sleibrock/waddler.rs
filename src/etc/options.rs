@@ -12,15 +12,18 @@ pub struct InfoOptions {
 
 pub struct DebugLumpsOptions {
     pub help:  bool,
+    pub filter: bool,
     pub files: Vec<String>
 }
 
 
 
 impl DebugLumpsOptions {
-    pub fn new(arg_iter: &mut Args) -> Result<DebugLumpsOptions, String> {
-    let mut help = false;
-    let mut files_buf : Vec<String> = Vec::new();
+    pub fn new(arg_iter: &mut Args) -> Result<DebugLumpsOptions, String>
+    {
+        let mut help = false;
+        let mut filter = false;
+        let mut files_buf : Vec<String> = Vec::new();
 
         let length : usize = arg_iter.len();
         if length == 0 {
@@ -35,14 +38,16 @@ impl DebugLumpsOptions {
             };
 
             match v.as_str() {
-                "-h" => { help = true },
-                _ => { files_buf.push(v.to_string()); },
+                "-h" => { help    = true },
+                "-f" => { filter  = true },
+                _    => { files_buf.push(v.to_string()); },
             }
             index += 1;
         }
 
         return Ok(DebugLumpsOptions {
             help: help,
+            filter: filter,
             files: files_buf,
         });
     }
@@ -50,10 +55,11 @@ impl DebugLumpsOptions {
 
 
 impl InfoOptions {
-    pub fn new(arg_iter: &mut Args) -> Result<InfoOptions, String> {
-    let mut help = false;
-    let mut files_buf : Vec<String> = Vec::new();
-
+    pub fn new(arg_iter: &mut Args) -> Result<InfoOptions, String>
+    {
+        let mut help = false;
+        let mut files_buf : Vec<String> = Vec::new();
+        
         let length : usize = arg_iter.len();
         if length == 0 {
             return Err(format!("debuglumps: no args supplied"));
