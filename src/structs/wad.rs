@@ -20,7 +20,6 @@ use structs::level::Level;
 
 
 pub struct WadHeader {
-    pub is_wad:     bool,
     pub wadtype:    u32,
     pub numlumps:   usize,
     pub lumpaddr:   usize,
@@ -37,25 +36,29 @@ pub struct Wad {
 
 
 impl WadHeader {
-    pub fn new(dat: &[u8]) -> WadHeader
+    pub fn new(dat: &[u8]) -> Result<WadHeader, String>
     {
+	// check if we were able to even receive data
         if dat.len() != HEADER_W {
-            panic!(format!("Header not given {} bytes", HEADER_W));
+	    return Err(format!("Header not given {} bytes", HEADER_W).into())
         }
 
+	// check if we have a valid IWAD/PWAD value
         let wad : u32 = u8_to_u32(dat[0], dat[1], dat[2], dat[3]);
+	if wad != IWAD_NUMBER || wad != PWAD_NUMBER {
+	    return Err(format!("Not a valid WAD (wadid: {})", wad).into());
+	}
 
-        WadHeader {
+        Ok(WadHeader {
             wadtype:  wad, 
             numlumps: u8_to_u32(dat[4], dat[5],  dat[6],  dat[7]) as usize,
             lumpaddr: u8_to_u32(dat[8], dat[9], dat[10], dat[11]) as usize,
-            is_wad: wad == IWAD_NUMBER || wad == PWAD_NUMBER,
-        }
+        })
     }
 
     // Methods used to calculate the ranges of the two WAD data pools
-    pub fn data_range(&self) -> Range<usize> { ((HEADER_W .. self.lumpaddr)) }
-    pub fn lump_range(&self) -> RangeFrom<usize> { (self.lumpaddr ..) }
+    pub fn data_range(&self) -> Range<usize> { (HEADER_W .. self.lumpaddr) }
+    pub fn lump_range(&self) -> RangeFrom<usize> { self.lumpaddr .. }
 }
 
 
@@ -88,6 +91,11 @@ impl Wad {
         if lumpd.len() == 0 || dat.len() == 0 {
             return Err(format!("No data given to Wad::new()"));
         }
+	// check if the lump_data slice matches the header count
+	// move this to the Wad builder
+	if lumpd.len() != hd.numlumps * LUMP_W {
+            return Err(String::from("Lump count does not match header"));
+	}
 
         let mut d_count : usize = 0;
         let mut lumps   : Vec<Lump>  = Vec::new();
@@ -100,9 +108,10 @@ impl Wad {
         {
             // generate a lump from the slice
             let pkt = u8_slice(l_offset, LUMP_W, &lumpd);
-            let l = Lump::new(&pkt);
+            let l = Lump::new(&pkt)?;
 
             // check if the lump is a BEHAVIOR lump from Hexen
+	    // This BEHAVIOR logic is only used by the Hexen game engine 
             if l.name.starts_with("BEHAVIOR") {
                 is_hexen = true;
             }
@@ -114,6 +123,7 @@ impl Wad {
 
         // if there are BEHAVIOR lumps, then we need an additional
         // data count target to account for it
+	// TODO: why do I have this here? am I stupid?
         let data_count_target = match is_hexen {
             true => 4,
             _    => 4,
@@ -121,14 +131,13 @@ impl Wad {
 
 
         let mut index : usize = 0;
-        let mut clevel    : usize = 0;
-        let mut cverts    : usize = 0;
-        let mut clines    : usize = 0;
-        let mut cthings   : usize = 0;
+        let mut clevel : usize = 0;
+        let mut cverts : usize = 0;
+        let mut clines : usize = 0;
+        let mut cthings : usize = 0;
         //let mut csectors  : &Lump = &lumps[0];
         //let mut csubsectors : &Lump = &lumps[0];
         //let mut csidedefs : &Lump = &lumps[0];
-
 
         while index < lumps.len()
         {
@@ -156,7 +165,7 @@ impl Wad {
                     u8_slice(lumps[clines].start,  lumps[clines].size, dat),
                     u8_slice(lumps[cthings].start, lumps[cthings].size, dat),
                     is_hexen,
-                ));
+                )?);
                 d_count = 0;
             }
             index += 1;

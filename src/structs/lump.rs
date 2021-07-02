@@ -1,8 +1,8 @@
 // structs/lump.rs
 
 use std::fmt;
-use utils::{u8_to_u32, u8_to_string};
-use structs::constants::{HEADER_W, LUMP_W};
+use utils::*;
+use structs::constants::*;
 
 pub struct Lump {
     pub name:     String,
@@ -15,14 +15,16 @@ pub struct Lump {
 
 
 impl Lump {
-    pub fn new(dat: &[u8]) -> Lump {
+    pub fn new(dat: &[u8]) -> Result<Lump, String> {
         if dat.len() != LUMP_W {
-            panic!(format!("Lump not given {} bytes", LUMP_W));
+            return Err(format!("Lump not given {} bytes", LUMP_W).into());
         }
 
         // find the first non-null byte from the right side
-        let mut first_zero : usize = 15;
-        while dat[first_zero] == 0 { first_zero -= 1; }
+	// very weird one-line iteration trick, yes
+	let first_zero = find_zero_from_right(&dat, 15);
+        //let mut first_zero : usize = 15;
+        //while dat[first_zero] == 0 { first_zero -= 1; }
         
         // check if the lump name matches:
         // NAME = ExMx or NAME = MAPxx
@@ -34,22 +36,22 @@ impl Lump {
             }
         }
 
-        let p = u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize;
-        let s = u8_to_u32(dat[4], dat[5], dat[6], dat[7]) as usize;
+        let p = u8_to_u32size(dat[0], dat[1], dat[2], dat[3]);
+        let s = u8_to_u32size(dat[4], dat[5], dat[6], dat[7]);
                  
         let p_h = match is_level_lump {
             false => p - HEADER_W,
             _     => 0,
         };
 
-        Lump {
+        Ok(Lump {
             is_level: is_level_lump,
             posn:     p,
             size:     s,
             start:    p_h,
             end:      p_h + s,
             name:     u8_to_string(&dat[8..(first_zero+1)]),
-        }
+        })
     }
 }
 

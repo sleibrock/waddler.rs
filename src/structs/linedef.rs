@@ -29,18 +29,18 @@ pub struct LineDef {
 
 
 impl LineDef {
-    pub fn new(is_hexen: bool, dat: &[u8]) -> LineDef {
+    pub fn new(is_hexen: bool, dat: &[u8]) -> Result<LineDef, String> {
         // match based on whether the game is Hexen or not
         match is_hexen {
             true => {
                 if dat.len() != HEXEN_LINEDEF_W {
-                    panic!(format!("LineDef not proper bytes"));
+                    return Err(format!("LineDef not proper bytes").into());
                 }
                 let right = u8_to_i16(dat[12], dat[13]);
                 let left  = u8_to_i16(dat[14], dat[15]);
                 let is_one_sided = left==-1 || right==-1;
 
-                LineDef {
+                Ok(LineDef {
                     spectype: dat[6] as u16,
                     tag:      0,
                     end:      u8_to_u16(dat[2],  dat[3]) as usize,
@@ -51,18 +51,18 @@ impl LineDef {
                     args:     [dat[6], dat[7], dat[8], dat[9], dat[10], dat[11]],
                     is_hexen: true,
                     one_sided: is_one_sided,
-                }
+                })
             },
 
             _ => {
                 if dat.len() != DOOM_LINEDEF_W {
-                    panic!(format!("LineDef not given proper bytes"));
+                    return Err(format!("LineDef not given proper bytes").into());
                 }
                 let left  = u8_to_i16(dat[10], dat[11]);
                 let right = u8_to_i16(dat[12], dat[13]);
                 let is_one_sided = left==-1 || right==-1;
 
-                LineDef {
+                Ok(LineDef {
                     tag:       u8_to_u16(dat[8],   dat[9]),
                     end:       u8_to_u16(dat[2],   dat[3]) as usize,
                     left:      left,
@@ -73,7 +73,7 @@ impl LineDef {
                     args:      [0, 0, 0, 0, 0, 0],
                     is_hexen:  false,
                     one_sided: is_one_sided,
-                }
+                })
             }
         }
     }

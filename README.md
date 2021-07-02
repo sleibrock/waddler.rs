@@ -16,7 +16,6 @@ cargo install
 
 You need to Cargo installed as well as a Rust toolchain. For both, install Rustup.
 
-
 ## Using Waddler
 
 Currently, Waddler has a few functions available for use.

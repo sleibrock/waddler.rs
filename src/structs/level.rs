@@ -35,7 +35,7 @@ impl Level {
         ld_raw:    &[u8],
         thing_raw: &[u8],
         is_hexen: bool
-    ) -> Level {
+    ) -> Result<Level, String> {
         // start initializing vectors for the lumps
         let mut vertices : Vec<Vertex>  = Vec::new();
         let mut linedefs : Vec<LineDef> = Vec::new();
@@ -56,29 +56,29 @@ impl Level {
         // start parsing raw data and initializing structs
         let mut off : usize = 0;
         while off < vert_raw.len() {
-            vertices.push(Vertex::new(u8_slice(off, VERTEX_W, &vert_raw)));
+            vertices.push(Vertex::new(u8_slice(off, VERTEX_W, &vert_raw))?);
             off += VERTEX_W;
         }
 
         off = 0;
         while off < ld_raw.len() {
-            linedefs.push(LineDef::new(is_hexen, u8_slice(off, ld_w, &ld_raw)));
+            linedefs.push(LineDef::new(is_hexen, u8_slice(off, ld_w, &ld_raw))?);
             off += ld_w;
         }
 
         off = 0;
         while off < thing_raw.len() { 
-            things.push(Thing::new(is_hexen, u8_slice(off, thing_w, &thing_raw)));
+            things.push(Thing::new(is_hexen, u8_slice(off, thing_w, &thing_raw))?);
             off += thing_w;
         } 
 
         // return a new Level struct with each lump vector
-        Level {
+        Ok(Level {
             name: name.to_owned(),
             vertices: vertices,
             linedefs: linedefs,
             things:   things,
-        }
+        })
     }
 }
 

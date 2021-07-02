@@ -14,9 +14,9 @@ pub struct SideDef {
 
 
 impl SideDef {
-    pub fn new(dat: &[u8]) -> SideDef {
+    pub fn new(dat: &[u8]) -> Result<SideDef, String> {
         if dat.len() != SIDEDEF_W {
-            panic!(format!("Sidedef not given {} bytes", SIDEDEF_W));
+            return Err(format!("Sidedef not given {} bytes", SIDEDEF_W).into());
         }
 
         let mut zero1 : usize = 11;
@@ -26,14 +26,14 @@ impl SideDef {
         while dat[zero2] == 0 { zero2 -= 1; }
         while dat[zero3] == 0 { zero3 -= 1; }
 
-        SideDef {
+        Ok(SideDef {
             x_offset:   u8_to_i16(dat[0], dat[1]),
             y_offset:   u8_to_i16(dat[2], dat[3]),
             sector:     u8_to_u16(dat[28], dat[29]),
             upper_tex:  u8_to_string(&dat[4..zero1+1]),
             lower_tex:  u8_to_string(&dat[12..zero2+1]),
             middle_tex: u8_to_string(&dat[20..zero3+1]),
-        }
+        })
     }
 }
 

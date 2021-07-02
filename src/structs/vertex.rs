@@ -11,15 +11,15 @@ pub struct Vertex {
 
 
 impl Vertex {
-    pub fn new(dat: &[u8]) -> Vertex {
+    pub fn new(dat: &[u8]) -> Result<Vertex, String> {
         if dat.len() != VERTEX_W {
-            panic!(format!("Vertex not given {} bytes", VERTEX_W));
+            return Err(format!("Vertex not given {} bytes", VERTEX_W).into());
         }
 
-        Vertex {
+        Ok(Vertex {
             x: u8_to_i16(dat[0], dat[1]),
             y: u8_to_i16(dat[2], dat[3]),
-        }
+        })
     }
 }
 

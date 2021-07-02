@@ -41,13 +41,13 @@ pub struct Thing {
 
 
 impl Thing {
-    pub fn new(is_hexen: bool, dat: &[u8]) -> Thing {
+    pub fn new(is_hexen: bool, dat: &[u8]) -> Result<Thing, String> {
         match is_hexen {
             true => {
                 if dat.len() != HEXEN_THING_W {
-                    panic!(format!("Thing not given {} bytes", HEXEN_THING_W));
+                    return Err(format!("Thing not given {} bytes", HEXEN_THING_W).into());
                 }
-                Thing {
+                Ok(Thing {
                     tid:     u8_to_u16( dat[0],  dat[1]),
                     x:       u8_to_i16( dat[2],  dat[3]),
                     y:       u8_to_i16( dat[4],  dat[5]),
@@ -57,14 +57,14 @@ impl Thing {
                     flags:   u8_to_u16(dat[12], dat[13]),
                     action:  dat[14],
                     args:    [dat[15], dat[16], dat[17], dat[18], dat[19]],
-                }
+                })
             },
 
             _ => {
                 if dat.len() != DOOM_THING_W {
-                    panic!(format!("Thing not given {} bytes", DOOM_THING_W));
+                    return Err(format!("Thing not given {} bytes", DOOM_THING_W).into());
                 }
-                Thing {
+                Ok(Thing {
                     tid:     0,
                     x:       u8_to_i16(dat[0], dat[1]),
                     y:       u8_to_i16(dat[2], dat[3]),
@@ -74,7 +74,7 @@ impl Thing {
                     action:  0,
                     height:  0,
                     args:    [0,0,0,0,0],
-                }
+                })
             },
         }
     }
