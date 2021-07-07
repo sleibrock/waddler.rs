@@ -27,9 +27,9 @@ impl SideDef {
         while dat[zero3] == 0 { zero3 -= 1; }
 
         Ok(SideDef {
-            x_offset:   u8_to_i16(dat[0], dat[1]),
-            y_offset:   u8_to_i16(dat[2], dat[3]),
-            sector:     u8_to_u16(dat[28], dat[29]),
+            x_offset:   u8_to_i16(&dat[0..1]),
+            y_offset:   u8_to_i16(&dat[2..3]),
+            sector:     u8_to_u16(&dat[28..29]),
             upper_tex:  u8_to_string(&dat[4..zero1+1]),
             lower_tex:  u8_to_string(&dat[12..zero2+1]),
             middle_tex: u8_to_string(&dat[20..zero3+1]),

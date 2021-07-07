@@ -1,6 +1,6 @@
 // structs/thing.rs
 
-use utils::{u8_to_i16, u8_to_u16};
+use utils::*;
 use structs::constants::{DOOM_THING_W, HEXEN_THING_W};
 
 
@@ -48,13 +48,13 @@ impl Thing {
                     return Err(format!("Thing not given {} bytes", HEXEN_THING_W).into());
                 }
                 Ok(Thing {
-                    tid:     u8_to_u16( dat[0],  dat[1]),
-                    x:       u8_to_i16( dat[2],  dat[3]),
-                    y:       u8_to_i16( dat[4],  dat[5]),
-                    height:  u8_to_u16( dat[6],  dat[7]),
-                    angle:   u8_to_i16( dat[8],  dat[9]),
-                    ed_type: u8_to_u16(dat[10], dat[11]),
-                    flags:   u8_to_u16(dat[12], dat[13]),
+                    tid:     u8_to_u16(&dat[0..1]),
+                    x:       u8_to_i16(&dat[2..3]),
+                    y:       u8_to_i16(&dat[4..5]),
+                    height:  u8_to_u16(&dat[6..7]),
+                    angle:   u8_to_i16(&dat[8..9]),
+                    ed_type: u8_to_u16(&dat[10..11]),
+                    flags:   u8_to_u16(&dat[12..13]),
                     action:  dat[14],
                     args:    [dat[15], dat[16], dat[17], dat[18], dat[19]],
                 })
@@ -66,11 +66,11 @@ impl Thing {
                 }
                 Ok(Thing {
                     tid:     0,
-                    x:       u8_to_i16(dat[0], dat[1]),
-                    y:       u8_to_i16(dat[2], dat[3]),
-                    angle:   u8_to_i16(dat[4], dat[5]),
-                    ed_type: u8_to_u16(dat[6], dat[7]),
-                    flags:   u8_to_u16(dat[8], dat[9]),
+                    x:       u8_to_i16(&dat[0..1]),
+                    y:       u8_to_i16(&dat[2..3]),
+                    angle:   u8_to_i16(&dat[4..5]),
+                    ed_type: u8_to_u16(&dat[6..7]),
+                    flags:   u8_to_u16(&dat[8..9]),
                     action:  0,
                     height:  0,
                     args:    [0,0,0,0,0],

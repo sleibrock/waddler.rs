@@ -36,9 +36,9 @@ impl Lump {
             }
         }
 
-        let p = u8_to_u32size(dat[0], dat[1], dat[2], dat[3]);
-        let s = u8_to_u32size(dat[4], dat[5], dat[6], dat[7]);
-                 
+        let p = u8_to_usize(&dat[0..3]);
+        let s = u8_to_usize(&dat[4..7]);
+        
         let p_h = match is_level_lump {
             false => p - HEADER_W,
             _     => 0,

@@ -8,7 +8,7 @@ use std::fs::File;
 use std::io::Read;
 
 use structs::wad::{Wad, WadHeader};
-use structs::constants::{HEADER_W, LUMP_W};
+use structs::constants::*;
 
 
 /// Parse a Wad file into a Wad struct

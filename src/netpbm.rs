@@ -69,26 +69,16 @@ impl PPM {
         }
     }
  
-    pub fn write_file(&self, filename: &str) -> Result<u8, String>
+    pub fn write_file(&self, filename: &str) -> Result<u8, std::io::Error>
     {
         //let path = Path::new(filename);
-        let mut file = match File::create(filename) {
-            Ok(f) => f,
-            Err(e) => panic!("HELP 3"),
-        };
+        let mut file = File::create(filename)?;
         let header = format!("P6 {} {} 255\n", self.width, self.height);
 
-        match file.write(header.as_bytes()) {
-            Ok(_) => {},
-            Err(e) => { panic!("HELP"); }
-        }
-
-        match file.write(&self.data) {
-            Ok(_) => {},
-            Err(e) => { panic!("HELP 2"); }
-        }
-        
-        return Ok(0);
+        file.write(header.as_bytes())?;
+        file.write(&self.data)?;
+	
+        Ok(0)
     }
 }
 

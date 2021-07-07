@@ -17,8 +17,8 @@ impl Vertex {
         }
 
         Ok(Vertex {
-            x: u8_to_i16(dat[0], dat[1]),
-            y: u8_to_i16(dat[2], dat[3]),
+            x: u8_to_i16(&dat[0..1]),
+            y: u8_to_i16(&dat[2..3]),
         })
     }
 }

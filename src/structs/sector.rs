@@ -31,11 +31,11 @@ impl Sector {
         //while dat[zero2] == 0 { zero2 -= 1; }
 
         Ok(Sector {
-            floor: u8_to_u16(dat[0], dat[1]),
-            ceil:  u8_to_u16(dat[2], dat[3]),
-            light: u8_to_u16(dat[20], dat[21]),
-            stype: u8_to_u16(dat[2], dat[3]),
-            stag:  u8_to_u16(dat[2], dat[3]),
+            floor: u8_to_u16(&dat[0..1]),
+            ceil:  u8_to_u16(&dat[2..3]),
+            light: u8_to_u16(&dat[20..21]),
+            stype: u8_to_u16(&dat[2..3]),
+            stag:  u8_to_u16(&dat[2..3]),
             floor_tex: u8_to_string(&dat[4..(zero1+1)]),
             ceil_tex: u8_to_string(&dat[12..(zero2+1)]),
         })

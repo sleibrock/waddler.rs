@@ -4,7 +4,7 @@
 use std::fmt;
 use std::ops::{Range, RangeFrom};
 
-use utils::{u8_to_u32, u8_slice};
+use utils::*;
 use structs::constants::{HEADER_W, LUMP_W};
 use structs::constants::{IWAD_NUMBER, PWAD_NUMBER};
 use structs::lump::Lump;
@@ -23,6 +23,9 @@ pub struct WadHeader {
     pub wadtype:    u32,
     pub numlumps:   usize,
     pub lumpaddr:   usize,
+    pub data_range: Range<usize>, 
+    pub lump_range: RangeFrom<usize>,
+    
 }
 
 
@@ -44,20 +47,25 @@ impl WadHeader {
         }
 
 	// check if we have a valid IWAD/PWAD value
-        let wad : u32 = u8_to_u32(dat[0], dat[1], dat[2], dat[3]);
+        let wad = u8_to_u32(&dat[0..3]);
 	if wad != IWAD_NUMBER || wad != PWAD_NUMBER {
 	    return Err(format!("Not a valid WAD (wadid: {})", wad).into());
 	}
 
+	let num_lumps = u8_to_usize(&dat[4..7]);
+	let lump_addr = u8_to_usize(&dat[8..11]);
+
         Ok(WadHeader {
             wadtype:  wad, 
-            numlumps: u8_to_u32(dat[4], dat[5],  dat[6],  dat[7]) as usize,
-            lumpaddr: u8_to_u32(dat[8], dat[9], dat[10], dat[11]) as usize,
+            numlumps: num_lumps,
+            lumpaddr: lump_addr, 
+	    data_range: (HEADER_W .. lump_addr),
+	    lump_range: (lump_addr ..),
         })
     }
 
     // Methods used to calculate the ranges of the two WAD data pools
-    pub fn data_range(&self) -> Range<usize> { (HEADER_W .. self.lumpaddr) }
+    pub fn data_range(&self) -> Range<usize> { HEADER_W .. self.lumpaddr }
     pub fn lump_range(&self) -> RangeFrom<usize> { self.lumpaddr .. }
 }
 

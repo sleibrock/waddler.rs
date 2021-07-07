@@ -10,7 +10,7 @@
 
 use std::fs::File;
 use std::io::Write;
-use std::error::Error;
+//use std::error::Error;
 
 
 pub enum Color {
@@ -42,7 +42,7 @@ pub struct SVG {
     pub height:      u64,
     pub view_width:  u64,
     pub view_height: u64,
-    pub objects:     Vec<Box<SVGObject>>,
+    pub objects:     Vec<Box<dyn SVGObject>>,
 }
 
 pub struct SVGLine {
@@ -181,7 +181,7 @@ impl SVG {
     }
 
     // add an object to the container as long as it implements the needed trait
-    pub fn add_object(&mut self, sobj: Box<SVGObject>) -> usize {
+    pub fn add_object(&mut self, sobj: Box<dyn SVGObject>) -> usize {
         self.objects.push(sobj);
         return self.objects.len();
     }
@@ -206,8 +206,7 @@ impl SVG {
             Ok(new_file) => new_file,
             Err(why) => {
                 return Err(format!(
-                    "Couldn't create '{:?}': {}", fname, why.description()
-                ));
+                    "Couldn't create {}: {}", fname, why));
             }
         };
 

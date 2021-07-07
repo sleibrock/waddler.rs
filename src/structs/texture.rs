@@ -3,7 +3,7 @@
 /// These structs represent the TEXTURE1 and TEXTURE2 lumps
 /// as well as functions for handling parsing of texture blobs
 
-use utils::{u8_to_u32, u8_to_u16, u8_to_string};
+use utils::*;
 use structs::constants::MAPPATCH_W;
 
 pub struct TextureLump {
@@ -72,11 +72,11 @@ impl TextureLump {
         let mut off : Vec<usize> = Vec::new();
         let mut tex : Vec<MapTexture> = Vec::new();
 
-        let numtex = u8_to_u32(dat[0], dat[1], dat[2], dat[3]) as usize;
+        let numtex = u8_to_usize(&dat[0..3]);
         let offstart = numtex*4 as usize;
 
         return TextureLump {
-            numtextures: numtex as usize,
+            numtextures: numtex,
             offsets:     off,
             mtextures:   tex,
         };
