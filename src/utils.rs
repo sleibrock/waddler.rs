@@ -71,14 +71,14 @@ pub fn u8_to_i16(slice: &[u8]) -> i16 {
 
 /// Finding zeroes
 pub fn find_zero_from_right(datslice: &[u8], init: usize) -> usize {
-    for x in (0..init).into_iter().rev() {
+    for x in (0..init).rev() {
 	if datslice[x] == 0 { return x; }
     }
     return 0;
 }
 
 pub fn find_zero_from_left(datslice: &[u8], init: usize) -> usize {
-    for x in (0..init).into_iter() {
+    for x in (0..init) {
 	if datslice[x] == 0 { return x; }
     }
     return 0;
