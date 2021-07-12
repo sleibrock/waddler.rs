@@ -10,6 +10,7 @@ pub mod wad;
 pub mod level;
 pub mod thing;
 pub mod texture;
+pub mod seg;
 
 
 

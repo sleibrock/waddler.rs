@@ -12,14 +12,14 @@ pub struct Vertex {
 
 impl Vertex {
     pub fn new(dat: &[u8]) -> Result<Vertex, String> {
-        if dat.len() != VERTEX_W {
-            return Err(format!("Vertex not given {} bytes", VERTEX_W).into());
-        }
+	match dat.len() {
+	    VERTEX_W => Ok(Vertex {
+		x: u8_to_i16(&dat[0..1]),
+		y: u8_to_i16(&dat[2..3]),
+	    }),
 
-        Ok(Vertex {
-            x: u8_to_i16(&dat[0..1]),
-            y: u8_to_i16(&dat[2..3]),
-        })
+	    b => Err(format!("Invalid bytes (given {})", b)),
+	}
     }
 }
 

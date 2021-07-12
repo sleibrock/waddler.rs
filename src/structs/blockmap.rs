@@ -14,10 +14,10 @@ impl BlockMap {
     pub fn new(dat: &[u8]) -> BlockMap
     {
         BlockMap {
-            x:       u8_to_i16(dat[0], dat[1]),
-            y:       u8_to_i16(dat[2], dat[3]),
-            rows:    u8_to_u16(dat[6], dat[7])
-            columns: u8_to_u16(dat[4], dat[5]),
+            x:       u8_to_i16(&dat[0..2]),
+            y:       u8_to_i16(&dat[2..4]),
+            rows:    u8_to_u16(&dat[6..8])
+            columns: u8_to_u16(&dat[4..6]),
         }
     }
 

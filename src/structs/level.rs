@@ -9,12 +9,10 @@
 
 use std::fmt;
 use utils::u8_slice;
-use structs::linedef::LineDef;
-use structs::vertex::Vertex;
-use structs::thing::Thing;
-use structs::constants::{VERTEX_W};
-use structs::constants::{DOOM_LINEDEF_W, HEXEN_LINEDEF_W};
-use structs::constants::{DOOM_THING_W, HEXEN_THING_W};
+use structs::linedef::*;
+use structs::vertex::*;
+use structs::thing::*;
+use structs::constants::*;
 
 
 /// Level struct, which contains a name (String)
@@ -43,17 +41,14 @@ impl Level {
 
 
         // determine the widths of each struct needed
-        let ld_w = match is_hexen {
-            true => HEXEN_LINEDEF_W,
-            _    => DOOM_LINEDEF_W,
-        };
-
-        let thing_w = match is_hexen {
-            true => HEXEN_THING_W,
-            _    => DOOM_THING_W,
+        let (ld_w, thing_w) = match is_hexen {
+            true => (HEXEN_LINEDEF_W, HEXEN_THING_W),
+            _    => (DOOM_LINEDEF_W, DOOM_THING_W),
         };
 
         // start parsing raw data and initializing structs
+	// use the offset counter `off` to slice pieces of Doom bytes
+	// into structs. Might be rewritten into more hygenic Rust
         let mut off : usize = 0;
         while off < vert_raw.len() {
             vertices.push(Vertex::new(u8_slice(off, VERTEX_W, &vert_raw))?);
@@ -72,7 +67,7 @@ impl Level {
             off += thing_w;
         } 
 
-        // return a new Level struct with each lump vector
+        // return a new Level struct with each lump vector collection
         Ok(Level {
             name: name.to_owned(),
             vertices: vertices,

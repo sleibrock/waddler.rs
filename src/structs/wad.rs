@@ -39,8 +39,7 @@ pub struct Wad {
 
 
 impl WadHeader {
-    pub fn new(dat: &[u8]) -> Result<WadHeader, String>
-    {
+    pub fn new(dat: &[u8]) -> Result<WadHeader, String> {
 	// check if we were able to even receive data
         if dat.len() != HEADER_W {
 	    return Err(format!("Header not given {} bytes", HEADER_W).into())
@@ -52,6 +51,7 @@ impl WadHeader {
 	    return Err(format!("Not a valid WAD (wadid: {})", wad).into());
 	}
 
+	// get the number of lumps, and the lump address range
 	let num_lumps = u8_to_usize(&dat[4..7]);
 	let lump_addr = u8_to_usize(&dat[8..11]);
 
@@ -149,7 +149,7 @@ impl Wad {
 
         while index < lumps.len()
         {
-            let lump : &Lump = &lumps[index]; // get current lump
+            let lump = &lumps[index]; // get current lump
             
             if lump.is_level {
                 clevel = index;
@@ -179,13 +179,13 @@ impl Wad {
             index += 1;
         }
 
-        return Ok(Wad {
-            name: String::from(n),
+        Ok(Wad {
+            name: n.into(),
             header: hd,
             lumps: lumps,
             levels: levels,
             is_hexen: is_hexen,
-        });
+        })
     }
 
 

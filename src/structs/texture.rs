@@ -4,7 +4,7 @@
 /// as well as functions for handling parsing of texture blobs
 
 use utils::*;
-use structs::constants::MAPPATCH_W;
+use structs::constants::*;
 
 pub struct TextureLump {
     pub numtextures:  usize,
@@ -49,19 +49,19 @@ pub struct MapPatch {
 
 
 impl MapPatch {
-    pub fn new(dat: &[u8]) -> MapPatch
+    pub fn new(dat: &[u8]) -> Result<MapPatch, String>
     {
         if dat.len() != MAPPATCH_W {
             panic!("MapPatch not valid size");
         }
 
-        return MapPatch {
+        Ok(MapPatch {
             x_origin: 0,
             y_origin: 0,
             patch:    0,
             stepdir:  0,
             colormap: 0,
-        }
+        })
     }
 }
 

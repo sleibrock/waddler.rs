@@ -1,8 +1,10 @@
 // structs/thing.rs
 
 use utils::*;
-use structs::constants::{DOOM_THING_W, HEXEN_THING_W};
+use structs::constants::*;
 
+/// Thing struct
+/// TODO: needs to be corrected and finished
 
 /*
 doom struct
@@ -42,40 +44,34 @@ pub struct Thing {
 
 impl Thing {
     pub fn new(is_hexen: bool, dat: &[u8]) -> Result<Thing, String> {
-        match is_hexen {
-            true => {
-                if dat.len() != HEXEN_THING_W {
-                    return Err(format!("Thing not given {} bytes", HEXEN_THING_W).into());
-                }
-                Ok(Thing {
-                    tid:     u8_to_u16(&dat[0..1]),
-                    x:       u8_to_i16(&dat[2..3]),
-                    y:       u8_to_i16(&dat[4..5]),
-                    height:  u8_to_u16(&dat[6..7]),
-                    angle:   u8_to_i16(&dat[8..9]),
-                    ed_type: u8_to_u16(&dat[10..11]),
-                    flags:   u8_to_u16(&dat[12..13]),
-                    action:  dat[14],
-                    args:    [dat[15], dat[16], dat[17], dat[18], dat[19]],
-                })
-            },
+        match (dat.len(), is_hexen) {
+            (HEXEN_THING_W, true) => Ok(Thing {
+                tid:     u8_to_u16(&dat[0..1]),
+                x:       u8_to_i16(&dat[2..3]),
+                y:       u8_to_i16(&dat[4..5]),
+                height:  u8_to_u16(&dat[6..7]),
+                angle:   u8_to_i16(&dat[8..9]),
+                ed_type: u8_to_u16(&dat[10..11]),
+                flags:   u8_to_u16(&dat[12..13]),
+                action:  dat[14],
+                args:    [dat[15], dat[16], dat[17], dat[18], dat[19]],
+            }),
 
-            _ => {
-                if dat.len() != DOOM_THING_W {
-                    return Err(format!("Thing not given {} bytes", DOOM_THING_W).into());
-                }
-                Ok(Thing {
-                    tid:     0,
-                    x:       u8_to_i16(&dat[0..1]),
-                    y:       u8_to_i16(&dat[2..3]),
-                    angle:   u8_to_i16(&dat[4..5]),
-                    ed_type: u8_to_u16(&dat[6..7]),
-                    flags:   u8_to_u16(&dat[8..9]),
-                    action:  0,
-                    height:  0,
-                    args:    [0,0,0,0,0],
-                })
-            },
+            (DOOM_THING_W, _) => Ok(Thing {
+                tid:     0,
+                x:       u8_to_i16(&dat[0..1]),
+                y:       u8_to_i16(&dat[2..3]),
+                angle:   u8_to_i16(&dat[4..5]),
+                ed_type: u8_to_u16(&dat[6..7]),
+                flags:   u8_to_u16(&dat[8..9]),
+                action:  0,
+                height:  0,
+                args:    [0,0,0,0,0],
+            }),
+
+	    (bytes, _) => {
+		Err(format!("Invalid byte length (given {})", bytes))
+	    }
         }
     }
 }
