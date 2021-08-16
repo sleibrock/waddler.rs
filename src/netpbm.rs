@@ -3,7 +3,7 @@
 /// NetPBM image library
 /// Used for rendering .PPM P6 files (binary, rgb)
 
-use std::path::Path;
+//use std::path::Path;
 use std::io::Write;
 use std::fs::File;
  
@@ -60,7 +60,7 @@ impl PPM {
     {
         match self.get_offset(x, y) {
             Some(offset) => {
-                self.data[offset] = color.r;
+                self.data[offset]     = color.r;
                 self.data[offset + 1] = color.g;
                 self.data[offset + 2] = color.b;
                 true
@@ -81,9 +81,5 @@ impl PPM {
         Ok(0)
     }
 }
-
-
-
-
 
 // end netpbm.rs

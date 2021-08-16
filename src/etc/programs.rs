@@ -4,7 +4,7 @@
 use std::env::Args;
 use wadparse::parse;
 
-use etc::options::{InfoOptions, DebugLumpsOptions};
+use etc::options::*;
 
 
 /// Info entrypoint program
@@ -25,10 +25,13 @@ pub fn debuglumps_entrypoint(args: &mut Args) -> Result<u8, String>
     };
 
     for fname in &opts.files {
+	let wad = parse(fname)?;
+	/*
         let wad = match parse(fname) {
             Ok(w) => w,
             Err(_) => { return Err(format!("???")); },
         };
+	*/
 
         for lump in &wad.lumps {
             println!("{:?}", lump);

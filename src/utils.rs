@@ -78,7 +78,7 @@ pub fn find_zero_from_right(datslice: &[u8], init: usize) -> usize {
 }
 
 pub fn find_zero_from_left(datslice: &[u8], init: usize) -> usize {
-    for x in (0..init) {
+    for x in 0..init {
 	if datslice[x] == 0 { return x; }
     }
     return 0;
