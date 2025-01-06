@@ -25,5 +25,13 @@ waddler debuglumps [OPTIONS]... [FILE]...
 waddler svgmap [OPTIONS]... [FILE]...
 ```
 
+## Contributing
+
+Clone the repo.
+
+```
+git clone https://github.com/yourname/waddler
+cd waddler
+```
 
 More to come
